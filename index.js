@@ -1,6 +1,12 @@
 const { Command } = require('commander');
 const program = new Command();
-const { listContacts, getContactById, addContact, removeContact } = require('./contacts');
+const {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
+  updateContact,
+} = require('./contacts');
 
 program
   .option('-a, --action <type>', 'choose action')
@@ -29,6 +35,10 @@ function invokeAction({ action, id, name, email, phone }) {
 
     case 'remove':
       removeContact(id);
+      break;
+
+    case 'edit':
+      updateContact(id);
       break;
 
     default:

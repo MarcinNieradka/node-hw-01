@@ -1,4 +1,5 @@
 const fs = require('fs').promises;
+const readline = require('readline');
 const path = require('path');
 require('colors');
 const uuid = require('uuid');
@@ -83,9 +84,51 @@ const addContact = async (name, email, phone) => {
   }
 };
 
+const updateContact = async contactId => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  try {
+    const contacts = await readContactsFile();
+    const index = contacts.findIndex(contact => contact.id === contactId);
+    if (index === -1) {
+      console.log(`Contact with ID ${contactId} not found`.yellow);
+      return;
+    }
+
+    const updateContact = contacts[index];
+    console.log(`Now editing`.yellow, `${JSON.stringify(updateContact, null, 2)}:`);
+
+    const contactKeys = ['name', 'email', 'phone'];
+
+    for (const key of contactKeys) {
+      const newValue = await new Promise(resolve => {
+        rl.question(
+          `Provide new ${key}, or press enter to skip (${updateContact[key]}): `,
+          resolve
+        );
+      });
+      if (newValue) {
+        updateContact[key] = newValue;
+      }
+    }
+
+    contacts[index] = updateContact;
+    console.log(`Changed contact to ${JSON.stringify(contacts[index], null, 2)}`.green);
+    await writeContactsFile(contacts);
+  } catch (error) {
+    console.error('An error occurred:'.red, error);
+  } finally {
+    rl.close();
+  }
+};
+
 module.exports = {
   listContacts,
   getContactById,
   removeContact,
   addContact,
+  updateContact,
 };

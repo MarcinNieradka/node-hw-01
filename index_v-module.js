@@ -1,5 +1,11 @@
 import { Command } from 'commander';
-import { listContacts, getContactById, addContact, removeContact } from './contacts_v-module.js';
+import {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
+  editContact,
+} from './contacts_v-module.js';
 import 'colors';
 
 const program = new Command();
@@ -29,6 +35,9 @@ async function invokeAction({ action, id, name, email, phone }) {
         break;
       case 'remove':
         await removeContact(id);
+        break;
+      case 'edit':
+        await editContact(id);
         break;
       default:
         console.warn('\x1B[31m Nieznany typ działania!');
